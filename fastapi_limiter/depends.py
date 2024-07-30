@@ -37,8 +37,10 @@ class RateLimiter:
             raise Exception("You must call FastAPILimiter.init in startup event of fastapi!")
         route_index = 0
         dep_index = 0
+        route_path = request.scope["path"].removeprefix(request.app.root_path)
+        
         for i, route in enumerate(request.app.routes):
-            if route.path == request.scope["path"] and request.method in route.methods:
+            if route.path == route_path and request.method in route.methods:
                 route_index = i
                 for j, dependency in enumerate(route.dependencies):
                     if self is dependency.dependency:
